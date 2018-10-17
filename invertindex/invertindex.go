@@ -1,12 +1,13 @@
 package invertindex
 
 import (
+	"fmt"
 	"strings"
 )
 
 func Invertindex(s []byte) map[string]int {
 	str := string(s)
-	clear := strings.Split(str, " ") //выделение слов и удаление знаков препинания
+	clear := strings.Split(str, " ")
 	for i := 0; i < len(clear); i++ {
 		clear[i] = strings.TrimSpace(clear[i])
 		clear[i] = strings.Trim(clear[i], ",")
@@ -17,7 +18,8 @@ func Invertindex(s []byte) map[string]int {
 			clear = append(clear[:i], clear[i+1:]...)
 		}
 	}
-	//подсчет повторений для каждого слова
+	fmt.Println(clear)
+
 	m := make(map[string]int)
 	for i := 0; i < len(clear); i++ {
 		m[clear[i]]++
@@ -25,7 +27,6 @@ func Invertindex(s []byte) map[string]int {
 	return m
 }
 
-//проверка встретилось ли слово в данном файле
 func Checking(words map[string]int, word string) bool {
 	_, ok := words[word]
 	return ok
