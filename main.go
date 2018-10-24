@@ -6,30 +6,67 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"sync"
 
 	porterstemmer "github.com/reiver/go-porterstemmer"
-	invertindex "github.com/woopwoop/invertindex"
-	mapUtils "github.com/woopwoop/utils"
+	invertindex "github.com/t2-invert-index-search-Valynok/invertindex"
+	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
 )
+
+func indexFile(fileName string) map[string](map[string]int) {
+	fileContent, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	text := string(fileContent)
+	words := invertindex.GetWords(text)
+	fmt.Println("found ", len(words), "words in file ", fileName)
+	return invertindex.AddWordsToIndex(words, fileName)
+}
 
 func main() {
 
 	files := os.Args[1:]
 
 	index := make(map[string](map[string]int))
+	fileIndexes := make(chan map[string]map[string]int, len(files))
+	var wg sync.WaitGroup
 	for f := 0; f < len(files); f++ {
-		fileContent, err := ioutil.ReadFile(files[f])
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		text := string(fileContent)
-		words := invertindex.GetWords(text)
-
-		invertindex.AddWordsToIndex(words, index, files[f])
+		wg.Add(1)
+		go func(wg *sync.WaitGroup, fileName string) {
+			fileIndexes <- indexFile(fileName)
+			defer wg.Done()
+		}(&wg, files[f])
+		fmt.Println("go routine for ", files[f], " started")
 	}
 
+	fmt.Println("waiting for go routines...")
+	wg.Wait()
+
+	for f := 0; f < len(files); f++ {
+
+		fileRes := <-fileIndexes
+		//fmt.Println(fileRes)
+		for word, fileCounter := range fileRes {
+			for fileName, counter := range fileCounter {
+				x, isExist := index[word]
+				if isExist {
+					x[fileName] += counter
+				} else {
+					index[word] = make(map[string]int)
+					index[word][fileName] = counter
+				}
+
+			}
+			//fmt.Println(fileCounter)
+
+			//fmt.Println(fileCounter[fileName])
+		}
+
+	}
+	//fmt.Println(index)
 	fmt.Println("Введите поисковый запрос:")
 	scanner := bufio.NewScanner(os.Stdin) //считыванеи строки, а не слова до первого пробела
 	scanner.Scan()
