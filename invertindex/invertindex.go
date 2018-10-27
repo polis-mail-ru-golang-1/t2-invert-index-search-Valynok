@@ -27,8 +27,8 @@ func GetWords(text string) []string {
 	return words
 }
 
-func AddWordsToIndex(words []string, index map[string]map[string]int, fileName string) {
-
+func AddWordsToIndex(words []string, fileName string) map[string]map[string]int {
+	index := make(map[string]map[string]int)
 	for _, word := range words {
 		filesCounters, isExist := index[word]
 		if isExist {
@@ -38,4 +38,6 @@ func AddWordsToIndex(words []string, index map[string]map[string]int, fileName s
 		}
 
 	}
+
+	return index
 }
