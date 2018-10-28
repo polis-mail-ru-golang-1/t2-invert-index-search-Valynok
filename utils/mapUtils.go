@@ -1,6 +1,7 @@
 package mapUtils
 
 import (
+	"os"
 	"sort"
 )
 
@@ -21,4 +22,22 @@ func GetOrderedFiles(values map[string]int) []Keyvalue {
 	})
 
 	return sorted
+}
+
+func FilterFiles(files []string, predicate func(string) bool) []string {
+	result := make([]string, 0)
+	for _, item := range files {
+		if predicate(item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Map(files []os.FileInfo, f func(os.FileInfo) string) []string {
+	vsm := make([]string, len(files))
+	for i, v := range files {
+		vsm[i] = f(v)
+	}
+	return vsm
 }
