@@ -1,0 +1,48 @@
+{"level":"info","ts":1541262655.592879,"caller":"handlers/handlers.go:114","msg":"Index request"}
+{"level":"info","ts":1541263215.976659,"caller":"handlers/handlers.go:115","msg":"Index request"}
+{"level":"info","ts":1541263221.513783,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request:%!(EXTRA string=lalala)"}
+{"level":"info","ts":1541263221.5896251,"caller":"handlers/handlers.go:115","msg":"Index request"}
+{"level":"info","ts":1541263338.065553,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request: lalala"}
+{"level":"info","ts":1541263344.417075,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request: lalala"}
+{"level":"info","ts":1541263345.6422641,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request: fox for"}
+{"level":"info","ts":1541263346.5489101,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request: fox"}
+{"level":"info","ts":1541263346.6510332,"caller":"handlers/handlers.go:94","msg":"Got GET request with next request: fox"}
+{"level":"info","ts":1541704140.081524,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=file.txt, string= started)"}
+{"level":"info","ts":1541704140.0821571,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=read.txt, string= started)"}
+{"level":"info","ts":1541704140.082243,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=rock.txt, string= started)"}
+{"level":"info","ts":1541704140.082512,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=file.txt)"}
+{"level":"info","ts":1541704140.082644,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704140.083681,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=read.txt)"}
+{"level":"info","ts":1541704140.0837948,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704140.0837839,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=14, string=words in , string=rock.txt)"}
+{"level":"info","ts":1541704140.083929,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=14)"}
+{"level":"info","ts":1541704150.600415,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: fox for"}
+{"level":"info","ts":1541704153.718675,"caller":"handlers/handlers.go:127","msg":"Index request"}
+{"level":"info","ts":1541704153.798499,"caller":"handlers/handlers.go:127","msg":"Index request"}
+{"level":"info","ts":1541704153.8027468,"caller":"handlers/handlers.go:127","msg":"Index request"}
+{"level":"info","ts":1541704162.4582322,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: fox for"}
+{"level":"info","ts":1541704389.768555,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=file.txt, string= started)"}
+{"level":"info","ts":1541704389.76872,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=read.txt, string= started)"}
+{"level":"info","ts":1541704389.768757,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=rock.txt, string= started)"}
+{"level":"info","ts":1541704389.7693079,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=file.txt)"}
+{"level":"info","ts":1541704389.769592,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704389.769671,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=read.txt)"}
+{"level":"info","ts":1541704389.769692,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=14, string=words in , string=rock.txt)"}
+{"level":"info","ts":1541704389.7697659,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704389.7698429,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=14)"}
+{"level":"info","ts":1541704394.796458,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: fox for"}
+{"level":"info","ts":1541704512.3960829,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: gh"}
+{"level":"info","ts":1541704512.418814,"caller":"handlers/handlers.go:127","msg":"Index request"}
+{"level":"info","ts":1541704578.446284,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: gh"}
+{"level":"info","ts":1541704617.632181,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=file.txt, string= started)"}
+{"level":"info","ts":1541704617.6323001,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=read.txt, string= started)"}
+{"level":"info","ts":1541704617.632336,"caller":"handlers/handlers.go:88","msg":"go routine for %!(EXTRA string=rock.txt, string= started)"}
+{"level":"info","ts":1541704617.633013,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=14, string=words in , string=rock.txt)"}
+{"level":"info","ts":1541704617.633121,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=file.txt)"}
+{"level":"info","ts":1541704617.633138,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=14)"}
+{"level":"info","ts":1541704617.633177,"caller":"handlers/handlers.go:84","msg":"found %!(EXTRA int=11, string=words in , string=read.txt)"}
+{"level":"info","ts":1541704617.633245,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704617.633282,"caller":"handlers/handlers.go:93","msg":"got from pipe%!(EXTRA int=11)"}
+{"level":"info","ts":1541704621.546853,"caller":"handlers/handlers.go:129","msg":"Index request"}
+{"level":"info","ts":1541704621.555628,"caller":"handlers/handlers.go:129","msg":"Index request"}
+{"level":"info","ts":1541704623.9016478,"caller":"handlers/handlers.go:104","msg":"Got GET request with next request: gh"}
