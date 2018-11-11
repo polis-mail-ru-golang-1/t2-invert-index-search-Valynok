@@ -18,10 +18,9 @@ func GetIndex(text string, fileName string) IndexType {
 			return ((r >= 0 && r <= 64) || (r >= 91 && r <= 96) || (r >= 123))
 		})
 		words[i] = porterstemmer.StemString(words[i])
-		if words[i] == "" {
-			words = append(words[:i], words[i+1:]...)
+		if words[i] != "" {
+			AddWordToIndex(words[i], fileName, index)
 		}
-		AddWordToIndex(words[i], fileName, index)
 	}
 
 	return index

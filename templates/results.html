@@ -1,0 +1,24 @@
+{{define "ResultsPage"}}
+<html>
+
+<head>
+    <title>{{.Title}}</title>
+</head>
+
+<body>
+    <center>
+        <h1>{{.Title}}</h1>
+        You've requested: {{.Request}} <br/>
+        <br/>
+
+        {{.Results}}
+        
+        <br/>
+        <form>
+            <input type="button" value="Go back!" onclick="history.back()">
+        </form>
+    </center>
+</body>
+
+</html>
+{{end}}
