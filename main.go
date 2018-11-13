@@ -1,100 +1,103 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/t2-invert-index-search-Valynok/config"
+	"github.com/t2-invert-index-search-Valynok/handlers"
 	"github.com/t2-invert-index-search-Valynok/invertindex"
-	"github.com/t2-invert-index-search-Valynok/request"
 	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
+	"github.com/t2-invert-index-search-Valynok/view"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-var mainIndex invertindex.IndexType
-var fileNames []string
+var Logger *zap.SugaredLogger
 
-func indexFile(directoryPath string, fileName string) invertindex.IndexType {
+func main() {
+	cfg, err := config.Load()
+	if err != nil {
+		panic(err)
+	}
+
+	logCfg := zap.NewProductionConfig()
+	logCfg.OutputPaths = []string{
+		cfg.LogFileName,
+	}
+
+	var debugLevel zapcore.Level
+	debugLevel.Set(cfg.LogLevel)
+
+	logCfg.Level.SetLevel(debugLevel)
+	logger, err := logCfg.Build()
+	if err != nil {
+		panic(err)
+	}
+	Logger = logger.Sugar()
+	index, fileNames := IndexDirectory(cfg.DirectoryPath)
+
+	v, _ := view.New()
+	h := handlers.New(v, index, fileNames, Logger)
+
+	http.HandleFunc("/", h.IndexHandler)
+	http.HandleFunc("/search", h.SearchHandler)
+	Logger.Infof("starting server at %s", cfg.Listen)
+	http.ListenAndServe(cfg.Listen, nil)
+}
+
+func IndexDirectory(directory string) (invertindex.IndexType, []string) {
+	fileNames := GetFileNames(directory)
+
+	return IndexFiles(directory, fileNames), fileNames
+}
+
+func IndexFile(directoryPath string, fileName string) invertindex.IndexType {
 
 	fileContent, err := ioutil.ReadFile(directoryPath + "/" + fileName)
 
 	if err != nil {
-		fmt.Println(err)
+		Logger.Error(err)
 	}
 
 	text := string(fileContent)
-	fmt.Println(invertindex.GetIndex(text, fileName))
 	return invertindex.GetIndex(text, fileName)
 }
 
-func getFileNames(directoryRelativePath string) []string {
+func GetFileNames(directoryRelativePath string) []string {
 
 	files, err := ioutil.ReadDir(directoryRelativePath)
 	if err != nil {
-		fmt.Println(err)
+		Logger.Error(err)
 	}
 
 	fileNames := mapUtils.Map(files, func(fi os.FileInfo) string { return fi.Name() })
 	fileNames = mapUtils.FilterFiles(fileNames, func(fn string) bool {
-		if strings.HasSuffix(fn, ".txt") {
-			return true
-		} else {
-			return false
-		}
+		return strings.HasSuffix(fn, ".txt")
 	})
 	return fileNames
 }
 
-func indexFiles(filesDirectoryPath string, fileNames []string) invertindex.IndexType {
+func IndexFiles(filesDirectoryPath string, fileNames []string) invertindex.IndexType {
 	filesIndex := make(invertindex.IndexType)
 	fileIndexChannel := make(chan invertindex.IndexType, len(fileNames))
 	for f := 0; f < len(fileNames); f++ {
 		go func(fileName string) {
-			fileIndex := indexFile(filesDirectoryPath, fileName)
-			fmt.Println("found ", len(fileIndex), "words in ", fileName)
+			fileIndex := IndexFile(filesDirectoryPath, fileName)
+			Logger.Info("found ", len(fileIndex), "words in ", fileName)
 			fileIndexChannel <- fileIndex
 
 		}(fileNames[f])
-		fmt.Println("go routine for ", fileNames[f], " started")
+		Logger.Debug("go routine for ", fileNames[f], " started")
 	}
 
 	for f := 0; f < len(fileNames); f++ {
 		fileRes := <-fileIndexChannel
-		fmt.Println("got from pipe", len(fileRes))
-		invertindex.MergeIndex(filesIndex, fileRes)
+		Logger.Debug("got from pipe", len(fileRes))
+		filesIndex.MergeIndex(fileRes)
 	}
 
 	return filesIndex
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	searchText, ok := r.URL.Query()["search"]
-
-	if !ok {
-		http.Error(w, "Could not find parameter 'search'", http.StatusBadRequest)
-		return
-	}
-	w.Header().Set("Content-Type", "text/plain")
-
-	searchWords := strings.Split(searchText[0], " ")
-
-	result := request.GetResult(searchWords, mainIndex, fileNames)
-	for _, wordResult := range result {
-		if wordResult.Value != 0 {
-			fmt.Fprintln(w, wordResult.Filename, "; matches - ", wordResult.Value)
-		}
-	}
-}
-
-func main() {
-	filesDirectoryPath := os.Args[1]
-	fileNames = getFileNames(filesDirectoryPath)
-
-	mainIndex = indexFiles(filesDirectoryPath, fileNames)
-
-	http.HandleFunc("/", indexHandler)
-	fmt.Println("starting server at :8080")
-	http.ListenAndServe(":8080", nil)
 }
