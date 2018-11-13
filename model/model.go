@@ -59,8 +59,6 @@ func (m Model) AddCounters(wordid int, fileid int, counter int) {
 		Counter: counter,
 	}
 
-	m.l.Debug(counters)
-
 	m.db.Insert(&counters)
 }
 
@@ -187,8 +185,7 @@ func (m Model) GetCountersResult(words []string) []CounterResult {
 	for _, val := range *wordsDb {
 		wordsIds = append(wordsIds, val.Id)
 	}
-	m.l.Info(wordsDb)
-	m.l.Info(wordsIds)
+
 	counters := m.getCounters(wordsIds)
 
 	fileIds := make([]int, 0)
@@ -202,7 +199,7 @@ func (m Model) GetCountersResult(words []string) []CounterResult {
 		index := mapUtils.Find(len(files), func(i int) bool {
 			return files[i].Id == val.FileId
 		})
-		m.l.Debug(index)
+
 		fileName := files[index].Name
 
 		res = append(res, CounterResult{File: fileName, Counter: val.Counter})

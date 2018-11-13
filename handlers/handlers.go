@@ -24,7 +24,6 @@ func New(v view.View, m model.Model, index invertindex.IndexType, fileNames []st
 }
 
 func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
-	c.logger.Info("121312")
 	defer r.Body.Close()
 
 	viewData := make([]view.SearchResult, 0)
