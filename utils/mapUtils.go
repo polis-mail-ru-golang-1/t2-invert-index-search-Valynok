@@ -2,26 +2,11 @@ package mapUtils
 
 import (
 	"os"
-	"sort"
 )
 
-//сортировка результата по количеству совпадений
 type Keyvalue struct {
 	Filename string
 	Value    int
-}
-
-func GetOrderedFiles(values map[string]int) []Keyvalue {
-	var sorted []Keyvalue
-	for k, v := range values {
-		sorted = append(sorted, Keyvalue{k, v})
-	}
-
-	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i].Value > sorted[j].Value
-	})
-
-	return sorted
 }
 
 func FilterFiles(files []string, predicate func(string) bool) []string {
@@ -40,4 +25,14 @@ func Map(files []os.FileInfo, f func(os.FileInfo) string) []string {
 		vsm[i] = f(v)
 	}
 	return vsm
+}
+
+func Find(n int, f func(int) bool) int {
+	for i := 0; i < n; i++ {
+		if f(i) {
+			return i
+		}
+	}
+
+	return n
 }

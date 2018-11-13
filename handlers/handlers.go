@@ -6,9 +6,7 @@ import (
 
 	"github.com/t2-invert-index-search-Valynok/model"
 
-	porterstemmer "github.com/reiver/go-porterstemmer"
 	"github.com/t2-invert-index-search-Valynok/invertindex"
-	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
 	"github.com/t2-invert-index-search-Valynok/view"
 	"go.uber.org/zap"
 )
@@ -41,22 +39,19 @@ func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	searchText := queryData[0]
 	c.logger.Infof("Got GET request with next request: %s", searchText)
 
-	searchWords := strings.Split(searchText, " ")
+	words := strings.Fields(searchText)
+	normalizedWords := make([]string, len(words))
+	for _, s := range words {
+		normalizedWords = append(normalizedWords, invertindex.NormalizeWord(s))
+	}
 
-	//indexedWords := c.model.GetWords(searchWords)
+	result := c.model.GetCountersResult(normalizedWords)
 
-	//result := GetResult(searchWords, MainIndex, FileNames)
-
-	result := c.model.GetCountersResult(searchWords)
-
-	c.logger.Info(result)
-	//viewData := make([]view.SearchResult, 0)
-	// for _, wordResult := range result {
-	// 	if wordResult.Value != 0 {
-	// 		viewData = append(viewData, view.SearchResult{FileName: wordResult.Filename, Counter: wordResult.Value})
-	// 	}
-	// }
-
+	for _, fileresult := range result {
+		if fileresult.Counter != 0 {
+			viewData = append(viewData, view.SearchResult{FileName: fileresult.File, Counter: fileresult.Counter})
+		}
+	}
 	c.view.ResultsView(viewData, w, searchText)
 }
 
@@ -107,15 +102,6 @@ func (c Controller) UploadFileTextHandler(w http.ResponseWriter, r *http.Request
 		existedWordsIds[val.Word] = val.Id
 	}
 
-	// allWords := make([]model.Word, 0, len(words))
-
-	// allWords = append(allWords, (*existedWords)...)
-	// allWords = append(allWords, createdWords...)
-
-	// Logger.Debug(createdWords)
-	// Logger.Debug(existedWords)
-	// Logger.Debug(allWords)
-
 	c.logger.Debugf("all words count is %d", len(existedWordsIds))
 
 	counters := make([]model.Counters, 0, len(index))
@@ -146,16 +132,4 @@ func (c Controller) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	c.logger.Info("Index request")
 
 	c.view.SearchView(w)
-}
-
-func GetResult(words []string, index invertindex.IndexType, fileNames []string) []mapUtils.Keyvalue {
-	for o, re := range words {
-		words[o] = porterstemmer.StemString(re)
-	}
-
-	result := invertindex.FindIndex(index, words, fileNames)
-
-	sortedFiles := mapUtils.GetOrderedFiles(result)
-
-	return sortedFiles
 }

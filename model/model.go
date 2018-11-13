@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/go-pg/pg"
+	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
 	"go.uber.org/zap"
 )
 
@@ -46,8 +47,8 @@ type Word struct {
 
 type Counters struct {
 	Id      int
-	WordId  int `sql:"wordId"`
-	FileId  int `sql:"fileId"`
+	WordId  int `sql:"wordid"`
+	FileId  int `sql:"fileid"`
 	Counter int `sql:"counter"`
 }
 
@@ -151,18 +152,26 @@ func (m Model) GetFile(fileName string) *File {
 	return file
 }
 
+func (m Model) GetFiles(ids []int) []File {
+	res := make([]File, 0)
+	m.db.Model(&res).Where("id in (?)", pg.In(ids)).Select()
+
+	return res
+}
+
 type CounterResult struct {
-	fileId  string
+	File    string
 	Counter int
 }
 
-func (m Model) getCounters(wordsIds []int) []CounterResult {
+func (m Model) getCounters(wordsIds []int) []Counters {
 
-	var res []CounterResult
+	var res []Counters
 	err := m.db.Model(&Counters{}).
-		Column("FileId").
-		ColumnExpr("SUM(Counter) as Counter").
-		Group("fileId").
+		Column("fileid").
+		ColumnExpr("SUM(counter) as counter").
+		WhereIn("wordid in (?)", pg.In(wordsIds)).
+		Group("fileid").
 		Select(&res)
 
 	if err != nil {
@@ -182,5 +191,25 @@ func (m Model) GetCountersResult(words []string) []CounterResult {
 	m.l.Info(wordsIds)
 	counters := m.getCounters(wordsIds)
 
-	return counters
+	fileIds := make([]int, 0)
+	for _, val := range counters {
+		fileIds = append(fileIds, val.FileId)
+	}
+
+	files := m.GetFiles(fileIds)
+	// m.l.Debug(counters)
+	// m.l.Debug(fileIds)
+	// m.l.Debug(files)
+	res := make([]CounterResult, 0, len(counters))
+	for _, val := range counters {
+		index := mapUtils.Find(len(files), func(i int) bool {
+			return files[i].Id == val.FileId
+		})
+		m.l.Debug(index)
+		fileName := files[index].Name
+
+		res = append(res, CounterResult{File: fileName, Counter: val.Counter})
+	}
+
+	return res
 }

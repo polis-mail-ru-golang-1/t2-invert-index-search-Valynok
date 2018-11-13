@@ -128,7 +128,7 @@ func IndexFiles(filesDirectoryPath string, fileNames []string) invertindex.Index
 	for f := 0; f < len(fileNames); f++ {
 		fileRes := <-fileIndexChannel
 		Logger.Debug("got from pipe", len(fileRes))
-		invertindex.MergeIndex(filesIndex, fileRes)
+		filesIndex.MergeIndex(fileRes)
 	}
 
 	return filesIndex
