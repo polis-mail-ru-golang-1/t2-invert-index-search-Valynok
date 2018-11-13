@@ -1,7 +1,6 @@
 .vscode/*
-/myproject.log
+myproject.log
 
-# *.txt
+*.txt
 .DS_Store
-
-
+/main
