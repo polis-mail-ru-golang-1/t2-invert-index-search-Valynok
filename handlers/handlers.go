@@ -37,7 +37,7 @@ func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	searchWords := strings.Split(searchText, " ")
 
-	result := GetResult(searchWords, c.mainIndex, c.fileNames)
+	result := c.GetResult(searchWords, c.fileNames)
 
 	for _, wordResult := range result {
 		if wordResult.Value != 0 {
@@ -56,12 +56,12 @@ func (c Controller) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	c.view.SearchView(w)
 }
 
-func GetResult(words []string, index invertindex.IndexType, fileNames []string) []mapUtils.Keyvalue {
+func (c Controller) GetResult(words []string, fileNames []string) []mapUtils.Keyvalue {
 	for o, re := range words {
 		words[o] = porterstemmer.StemString(re)
 	}
 
-	result := invertindex.FindIndex(index, words, fileNames)
+	result := c.mainIndex.FindIndex(words, fileNames)
 
 	sortedFiles := mapUtils.GetOrderedFiles(result)
 

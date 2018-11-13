@@ -58,7 +58,7 @@ func TestGetIndex(t *testing.T) {
 func TestMergeIndex(t *testing.T) {
 	main, addible, expected := getData()
 
-	actual := MergeIndex(main, addible)
+	actual := main.MergeIndex(addible)
 
 	eq := cmp.Equal(expected, actual)
 	if !eq {
