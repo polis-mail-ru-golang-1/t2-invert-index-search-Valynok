@@ -11,7 +11,15 @@
         You've requested: {{.Request}} <br/>
         <br/>
 
-        {{.Results}}
+        <ul>
+            {{if not .Results}}
+                Nothing found
+            {{else}}
+                {{range .Results}}
+                    <li>{{.FileName}}; matches {{.Counter}}</li>
+                {{end}}
+            {{end}}  
+        </ul>
         
         <br/>
         <form>

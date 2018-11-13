@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"io"
 	"net/http"
-	"strings"
 
 	"github.com/t2-invert-index-search-Valynok/model"
 
@@ -25,39 +23,26 @@ func New(v view.View, m model.Model) Controller {
 	return Controller{view: v, model: m}
 }
 
-func (c Controller) ResultsView(str string, w io.Writer, s string) {
-	c.view.ResultsPage.ExecuteTemplate(w, "ResultsPage",
-		struct {
-			Title   string
-			Results string
-			Request string
-		}{
-			Title:   "Results",
-			Results: str,
-			Request: s,
-		})
-}
-
 func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	searchText := r.URL.Query()["text"][0]
 	Logger.Infof("Got GET request with next request: %s", searchText)
 
-	searchWords := strings.Split(searchText, " ")
+	//searchWords := strings.Split(searchText, " ")
 
-	indexedWords := c.model.GetWords(searchWords)
+	//indexedWords := c.model.GetWords(searchWords)
 
 	// result := GetResult(searchWords, MainIndex, FileNames)
-	str := ""
+
+	viewData := make([]view.SearchResult, 0)
 	// for _, wordResult := range result {
 	// 	if wordResult.Value != 0 {
-	// 		str += (wordResult.Filename + "; matches - " + strconv.Itoa(wordResult.Value) + "\n")
+	// 		viewData = append(viewData, view.SearchResult{FileName: wordResult.Filename, Counter: wordResult.Value})
 	// 	}
 	// }
 
-	c.ResultsView(str, w, searchText)
-
+	c.view.ResultsView(viewData, w, searchText)
 }
 
 func (c Controller) UploadFileTextHandler(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +130,7 @@ func (c Controller) IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	Logger.Info("Index request")
 
-	c.view.SearchPage.ExecuteTemplate(w, "SearchPage", nil)
+	c.view.SearchView(w)
 }
 
 func GetResult(words []string, index invertindex.IndexType, fileNames []string) []mapUtils.Keyvalue {
