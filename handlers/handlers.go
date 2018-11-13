@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/t2-invert-index-search-Valynok/model"
 
@@ -25,11 +26,14 @@ func New(v view.View, m model.Model, index invertindex.IndexType, fileNames []st
 }
 
 func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
+	c.logger.Info("121312")
 	defer r.Body.Close()
 
 	viewData := make([]view.SearchResult, 0)
 	queryData := r.URL.Query()["text"]
+
 	if len(queryData) == 0 || len(queryData[0]) == 0 {
+		c.logger.Errorf("wrong query data: %v", queryData)
 		c.view.ResultsView(viewData, w, "")
 		return
 	}
@@ -37,12 +41,15 @@ func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	searchText := queryData[0]
 	c.logger.Infof("Got GET request with next request: %s", searchText)
 
-	//searchWords := strings.Split(searchText, " ")
+	searchWords := strings.Split(searchText, " ")
 
 	//indexedWords := c.model.GetWords(searchWords)
 
-	// result := GetResult(searchWords, MainIndex, FileNames)
+	//result := GetResult(searchWords, MainIndex, FileNames)
 
+	result := c.model.GetCountersResult(searchWords)
+
+	c.logger.Info(result)
 	//viewData := make([]view.SearchResult, 0)
 	// for _, wordResult := range result {
 	// 	if wordResult.Value != 0 {

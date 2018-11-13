@@ -150,3 +150,37 @@ func (m Model) GetFile(fileName string) *File {
 	m.db.Model(file).Where("name = ?", fileName).Select()
 	return file
 }
+
+type CounterResult struct {
+	fileId  string
+	Counter int
+}
+
+func (m Model) getCounters(wordsIds []int) []CounterResult {
+
+	var res []CounterResult
+	err := m.db.Model(&Counters{}).
+		Column("FileId").
+		ColumnExpr("SUM(Counter) as Counter").
+		Group("fileId").
+		Select(&res)
+
+	if err != nil {
+		m.l.Error(err)
+	}
+
+	return res
+}
+
+func (m Model) GetCountersResult(words []string) []CounterResult {
+	wordsDb := m.GetWords(words)
+	wordsIds := make([]int, 0)
+	for _, val := range *wordsDb {
+		wordsIds = append(wordsIds, val.Id)
+	}
+	m.l.Info(wordsDb)
+	m.l.Info(wordsIds)
+	counters := m.getCounters(wordsIds)
+
+	return counters
+}
