@@ -19,22 +19,22 @@ func GetIndex(text string, fileName string) IndexType {
 		})
 		words[i] = porterstemmer.StemString(words[i])
 		if words[i] != "" {
-			AddWordToIndex(words[i], fileName, index)
+			index.AddWordToIndex(words[i], fileName)
 		}
 	}
 
 	return index
 }
 
-func AddWordToIndex(word string, fileName string, index IndexType) IndexType {
-	fileCounter, isExist := index[word]
+func (i IndexType) AddWordToIndex(word string, fileName string) IndexType {
+	fileCounter, isExist := i[word]
 	if isExist {
 		fileCounter[fileName]++
 	} else {
-		index[word] = map[string]int{fileName: 1}
+		i[word] = map[string]int{fileName: 1}
 	}
 
-	return index
+	return i
 }
 
 func MergeIndex(main IndexType, slave IndexType) IndexType {

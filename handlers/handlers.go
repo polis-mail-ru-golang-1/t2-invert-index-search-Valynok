@@ -11,29 +11,34 @@ import (
 	"go.uber.org/zap"
 )
 
-var MainIndex invertindex.IndexType
-var FileNames []string
-var Logger *zap.SugaredLogger
-
 type Controller struct {
-	view view.View
+	view      view.View
+	mainIndex invertindex.IndexType
+	fileNames []string
+	logger    *zap.SugaredLogger
 }
 
-func New(v view.View) Controller {
-	return Controller{view: v}
+func New(v view.View, index invertindex.IndexType, fileNames []string, l *zap.SugaredLogger) Controller {
+	return Controller{view: v, mainIndex: index, fileNames: fileNames, logger: l}
 }
 
 func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	searchText := r.URL.Query()["text"][0]
-	Logger.Infof("Got GET request with next request: %s", searchText)
+	viewData := make([]view.SearchResult, 0)
+	queryData := r.URL.Query()["text"]
+	if len(queryData) == 0 || len(queryData[0]) == 0 {
+		c.view.ResultsView(viewData, w, "")
+		return
+	}
+
+	searchText := queryData[0]
+	c.logger.Infof("Got GET request with next request: %s", searchText)
 
 	searchWords := strings.Split(searchText, " ")
 
-	result := GetResult(searchWords, MainIndex, FileNames)
+	result := GetResult(searchWords, c.mainIndex, c.fileNames)
 
-	viewData := make([]view.SearchResult, 0)
 	for _, wordResult := range result {
 		if wordResult.Value != 0 {
 			viewData = append(viewData, view.SearchResult{FileName: wordResult.Filename, Counter: wordResult.Value})
@@ -46,7 +51,7 @@ func (c Controller) SearchHandler(w http.ResponseWriter, r *http.Request) {
 func (c Controller) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	Logger.Info("Index request")
+	c.logger.Info("Index request")
 
 	c.view.SearchView(w)
 }

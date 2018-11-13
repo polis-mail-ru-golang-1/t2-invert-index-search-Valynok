@@ -37,14 +37,10 @@ func main() {
 		panic(err)
 	}
 	Logger = logger.Sugar()
-	handlers.Logger = Logger
 	index, fileNames := IndexDirectory(cfg.DirectoryPath)
 
-	handlers.MainIndex = index
-	handlers.FileNames = fileNames
-
 	v, _ := view.New()
-	h := handlers.New(v)
+	h := handlers.New(v, index, fileNames, Logger)
 
 	http.HandleFunc("/", h.IndexHandler)
 	http.HandleFunc("/search", h.SearchHandler)
