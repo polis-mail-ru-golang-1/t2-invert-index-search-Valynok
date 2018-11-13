@@ -197,9 +197,6 @@ func (m Model) GetCountersResult(words []string) []CounterResult {
 	}
 
 	files := m.GetFiles(fileIds)
-	// m.l.Debug(counters)
-	// m.l.Debug(fileIds)
-	// m.l.Debug(files)
 	res := make([]CounterResult, 0, len(counters))
 	for _, val := range counters {
 		index := mapUtils.Find(len(files), func(i int) bool {

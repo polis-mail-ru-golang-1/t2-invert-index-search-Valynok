@@ -106,10 +106,7 @@ func (c Controller) UploadFileTextHandler(w http.ResponseWriter, r *http.Request
 
 	counters := make([]model.Counters, 0, len(index))
 	for k, v := range index {
-		//Logger.Debug(k)
 		wordId := existedWordsIds[k]
-		//Logger.Debug(wordId)
-		//c.model.AddCounters(wordId, file.Id, )
 		counters = append(counters, model.Counters{FileId: file.Id, WordId: wordId, Counter: v[file.Name]})
 	}
 

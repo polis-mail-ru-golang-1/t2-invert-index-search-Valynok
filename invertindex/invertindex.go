@@ -10,7 +10,7 @@ type IndexType map[string]map[string]int
 
 func GetIndex(text string, fileName string) IndexType {
 	index := make(IndexType)
-	words := strings.Fields(text) //выделение слов и удаление знаков препинания
+	words := strings.Fields(text)
 	for i := 0; i < len(words); i++ {
 		words[i] = NormalizeWord(words[i])
 		if words[i] != "" {
