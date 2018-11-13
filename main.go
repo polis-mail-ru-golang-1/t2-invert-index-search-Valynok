@@ -6,9 +6,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/go-pg/pg"
 	"github.com/t2-invert-index-search-Valynok/config"
 	"github.com/t2-invert-index-search-Valynok/handlers"
 	"github.com/t2-invert-index-search-Valynok/invertindex"
+	"github.com/t2-invert-index-search-Valynok/model"
 	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
 	"github.com/t2-invert-index-search-Valynok/view"
 	"go.uber.org/zap"
@@ -38,18 +40,46 @@ func main() {
 	}
 	Logger = logger.Sugar()
 	handlers.Logger = Logger
+	model.Logger = Logger
+
+	pgOpt, err := pg.ParseURL(cfg.PgSQL)
+	if err != nil {
+		Logger.Error(err)
+	}
+	pgdb := pg.Connect(pgOpt)
+	defer pgdb.Close()
+	m := model.New(pgdb)
+
+	m.ClearModel()
+
 	index, fileNames := IndexDirectory(cfg.DirectoryPath)
 
-	handlers.MainIndex = index
-	handlers.FileNames = fileNames
+	SaveToDatabase(index, m, fileNames)
 
 	v, _ := view.New()
-	h := handlers.New(v)
+	h := handlers.New(v, m)
 
 	http.HandleFunc("/", h.IndexHandler)
 	http.HandleFunc("/search", h.SearchHandler)
+	http.HandleFunc("/uploadForm", h.UploadIndexHandler)
+	http.HandleFunc("/upload", h.UploadFileTextHandler)
 	Logger.Infof("starting server at %s", cfg.Listen)
 	http.ListenAndServe(cfg.Listen, nil)
+}
+
+func SaveToDatabase(index invertindex.IndexType, model model.Model, fileNames []string) {
+	fileIdMap := make(map[string]int)
+	for _, val := range fileNames {
+		file := model.GetOrAddFile(val)
+		fileIdMap[val] = file.Id
+	}
+
+	for word, filecounter := range index {
+		addedWord := model.GetOrAddWord(word)
+		for filename, counter := range filecounter {
+			model.AddCounters(addedWord.Id, fileIdMap[filename], counter)
+		}
+	}
 }
 
 func IndexDirectory(directory string) (invertindex.IndexType, []string) {
@@ -67,7 +97,7 @@ func IndexFile(directoryPath string, fileName string) invertindex.IndexType {
 	}
 
 	text := string(fileContent)
-	Logger.Info(invertindex.GetIndex(text, fileName))
+
 	return invertindex.GetIndex(text, fileName)
 }
 

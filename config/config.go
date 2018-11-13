@@ -5,9 +5,9 @@ import (
 )
 
 type Config struct {
-	Listen string `env:"LISTEN" envDefault:"localhost:8080"`
-	//PgSQL    string `env:"PGSQL" envDefault:"postgres://postgres:111111@localhost:5432/blog?sslmode=disable"`
-	LogLevel      string `env:"LOG_LEVEL" envDefault:"info"`
+	Listen        string `env:"LISTEN" envDefault:"localhost:8080"`
+	PgSQL         string `env:"PGSQL" envDefault:"postgres://valynok:qwedfgq7@51.15.112.136:5432/valynok_db?sslmode=disable"`
+	LogLevel      string `env:"LOG_LEVEL" envDefault:"debug"`
 	LogFileName   string `env:"MyLogFileName" envDefault:"myproject.log"`
 	DirectoryPath string `env:"MyDirectoryPath" envDefault:"./files"`
 }
