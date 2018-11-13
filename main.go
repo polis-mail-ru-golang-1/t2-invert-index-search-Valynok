@@ -39,8 +39,6 @@ func main() {
 		panic(err)
 	}
 	Logger = logger.Sugar()
-	handlers.Logger = Logger
-	model.Logger = Logger
 
 	pgOpt, err := pg.ParseURL(cfg.PgSQL)
 	if err != nil {
@@ -48,7 +46,7 @@ func main() {
 	}
 	pgdb := pg.Connect(pgOpt)
 	defer pgdb.Close()
-	m := model.New(pgdb)
+	m := model.New(pgdb, Logger)
 
 	m.ClearModel()
 
@@ -57,7 +55,7 @@ func main() {
 	SaveToDatabase(index, m, fileNames)
 
 	v, _ := view.New()
-	h := handlers.New(v, m)
+	h := handlers.New(v, m, index, fileNames, Logger)
 
 	http.HandleFunc("/", h.IndexHandler)
 	http.HandleFunc("/search", h.SearchHandler)

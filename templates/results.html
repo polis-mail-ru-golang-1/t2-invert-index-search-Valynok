@@ -8,10 +8,14 @@
 <body>
     <center>
         <h1>{{.Title}}</h1>
-        You've requested: {{.Request}} <br/>
+            {{if not .Request}}
+            Please, specify search word <br/>
+            {{else}}
+                You've requested: {{.Request}} <br/>  
+            {{end}}
         <br/>
 
-        <ul>
+        <ul style="list-style:none">
             {{if not .Results}}
                 Nothing found
             {{else}}

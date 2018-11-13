@@ -5,15 +5,15 @@ import (
 	"go.uber.org/zap"
 )
 
-var Logger *zap.SugaredLogger
-
 type Model struct {
 	db *pg.DB
+	l  *zap.SugaredLogger
 }
 
-func New(db *pg.DB) Model {
+func New(db *pg.DB, logger *zap.SugaredLogger) Model {
 	return Model{
 		db: db,
+		l:  logger,
 	}
 }
 
@@ -25,17 +25,17 @@ type File struct {
 func (m Model) ClearModel() {
 	_, err := m.db.Exec("TRUNCATE counters CASCADE")
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	_, err = m.db.Exec("TRUNCATE files CASCADE")
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	_, err = m.db.Exec("TRUNCATE words CASCADE")
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 }
 
@@ -58,7 +58,7 @@ func (m Model) AddCounters(wordid int, fileid int, counter int) {
 		Counter: counter,
 	}
 
-	Logger.Debug(counters)
+	m.l.Debug(counters)
 
 	m.db.Insert(&counters)
 }
@@ -70,7 +70,7 @@ func (m Model) AddCountersBulk(counters []Counters) {
 func (m Model) AddCoutersBulk(counters []Counters) {
 	err := m.db.Insert(&counters)
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 }
 
@@ -87,7 +87,7 @@ func (m Model) GetOrAddWord(wordname string) Word {
 		SelectOrInsert()
 
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	return word
@@ -104,7 +104,7 @@ func (m Model) AddWordBulk(words []string) []Word {
 
 	err := m.db.Insert(&wordsToAdd)
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	return wordsToAdd
@@ -121,7 +121,7 @@ func (m Model) GetWords(wordNames []string) *[]Word {
 	err := m.db.Model(result).WhereIn("word in (?)", pg.In(wordNames)).Select()
 
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	return result
@@ -139,7 +139,7 @@ func (m Model) GetOrAddFile(filename string) File {
 		SelectOrInsert()
 
 	if err != nil {
-		Logger.Error(err)
+		m.l.Error(err)
 	}
 
 	return file
