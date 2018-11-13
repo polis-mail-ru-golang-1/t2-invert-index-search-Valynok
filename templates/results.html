@@ -1,0 +1,36 @@
+{{define "ResultsPage"}}
+<html>
+
+<head>
+    <title>{{.Title}}</title>
+</head>
+
+<body>
+    <center>
+        <h1>{{.Title}}</h1>
+            {{if not .Request}}
+            Please, specify search word <br/>
+            {{else}}
+                You've requested: {{.Request}} <br/>  
+            {{end}}
+        <br/>
+
+        <ul style="list-style:none">
+            {{if not .Results}}
+                Nothing found
+            {{else}}
+                {{range .Results}}
+                    <li>{{.FileName}}; matches {{.Counter}}</li>
+                {{end}}
+            {{end}}  
+        </ul>
+        
+        <br/>
+        <form>
+            <input type="button" value="Go back!" onclick="history.back()">
+        </form>
+    </center>
+</body>
+
+</html>
+{{end}}
