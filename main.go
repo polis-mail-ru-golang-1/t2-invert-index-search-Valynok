@@ -34,7 +34,7 @@ func main() {
 	logCfg.Level.SetLevel(debugLevel)
 	logger, err := logCfg.Build()
 	if err != nil {
-		Logger.Error(err)
+		panic(err)
 	}
 	Logger = logger.Sugar()
 	handlers.Logger = Logger
@@ -67,7 +67,6 @@ func IndexFile(directoryPath string, fileName string) invertindex.IndexType {
 	}
 
 	text := string(fileContent)
-	Logger.Info(invertindex.GetIndex(text, fileName))
 	return invertindex.GetIndex(text, fileName)
 }
 
@@ -80,11 +79,7 @@ func GetFileNames(directoryRelativePath string) []string {
 
 	fileNames := mapUtils.Map(files, func(fi os.FileInfo) string { return fi.Name() })
 	fileNames = mapUtils.FilterFiles(fileNames, func(fn string) bool {
-		if strings.HasSuffix(fn, ".txt") {
-			return true
-		} else {
-			return false
-		}
+		return strings.HasSuffix(fn, ".txt")
 	})
 	return fileNames
 }
@@ -99,12 +94,12 @@ func IndexFiles(filesDirectoryPath string, fileNames []string) invertindex.Index
 			fileIndexChannel <- fileIndex
 
 		}(fileNames[f])
-		Logger.Info("go routine for ", fileNames[f], " started")
+		Logger.Debug("go routine for ", fileNames[f], " started")
 	}
 
 	for f := 0; f < len(fileNames); f++ {
 		fileRes := <-fileIndexChannel
-		Logger.Info("got from pipe", len(fileRes))
+		Logger.Debug("got from pipe", len(fileRes))
 		invertindex.MergeIndex(filesIndex, fileRes)
 	}
 

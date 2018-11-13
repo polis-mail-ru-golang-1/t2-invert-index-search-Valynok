@@ -1,10 +1,18 @@
 package view
 
-import "html/template"
+import (
+	"html/template"
+	"io"
+)
 
 type View struct {
 	ResultsPage *template.Template
 	SearchPage  *template.Template
+}
+
+type SearchResult struct {
+	FileName string
+	Counter  int
 }
 
 func New() (View, error) {
@@ -22,4 +30,21 @@ func New() (View, error) {
 	}
 
 	return v, nil
+}
+
+func (v View) ResultsView(data []SearchResult, w io.Writer, s string) {
+	v.ResultsPage.ExecuteTemplate(w, "ResultsPage",
+		struct {
+			Title   string
+			Results []SearchResult
+			Request string
+		}{
+			Title:   "Results",
+			Results: data,
+			Request: s,
+		})
+}
+
+func (v View) SearchView(w io.Writer) {
+	v.SearchPage.ExecuteTemplate(w, "SearchPage", nil)
 }
