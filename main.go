@@ -52,7 +52,9 @@ func main() {
 
 	index, fileNames := IndexDirectory(cfg.DirectoryPath)
 
-	SaveToDatabase(index, m, fileNames)
+	if cfg.Init {
+		SaveToDatabase(index, m, fileNames)
+	}
 
 	v, _ := view.New()
 	h := handlers.New(v, m, index, fileNames, Logger)
