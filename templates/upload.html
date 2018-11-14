@@ -1,0 +1,18 @@
+{{define "UploadPage"}}
+<html>
+
+<body>
+	<center>
+		<form action="/upload" method="post">
+			File's name: <input type="text" name="filename"><br/>
+			Text: <textarea rows="50" cols="50" name="book"></textarea>
+			<input type="submit" value="Upload">
+		</form>
+		<form>
+			<input type="button" value="Go back!" onclick="history.back()">
+		</form>
+	</center>
+</body>
+
+</html>
+{{end}}

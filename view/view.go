@@ -8,6 +8,7 @@ import (
 type View struct {
 	ResultsPage *template.Template
 	SearchPage  *template.Template
+	UploadPage  *template.Template
 }
 
 type SearchResult struct {
@@ -25,6 +26,11 @@ func New() (View, error) {
 	}
 
 	v.ResultsPage, err = template.ParseFiles("templates/results.html")
+	if err != nil {
+		return v, err
+	}
+
+	v.UploadPage, err = template.ParseFiles("templates/upload.html")
 	if err != nil {
 		return v, err
 	}

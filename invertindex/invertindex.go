@@ -10,20 +10,25 @@ type IndexType map[string]map[string]int
 
 func GetIndex(text string, fileName string) IndexType {
 	index := make(IndexType)
-	words := strings.Fields(text) //выделение слов и удаление знаков препинания
+	words := strings.Fields(text)
 	for i := 0; i < len(words); i++ {
-		words[i] = strings.ToLower(words[i])
-		words[i] = strings.TrimSpace(words[i])
-		words[i] = strings.TrimFunc(words[i], func(r rune) bool {
-			return ((r >= 0 && r <= 64) || (r >= 91 && r <= 96) || (r >= 123))
-		})
-		words[i] = porterstemmer.StemString(words[i])
+		words[i] = NormalizeWord(words[i])
 		if words[i] != "" {
 			index.AddWordToIndex(words[i], fileName)
 		}
 	}
 
 	return index
+}
+
+func NormalizeWord(str string) string {
+	str = strings.ToLower(str)
+	str = strings.TrimSpace(str)
+	str = strings.TrimFunc(str, func(r rune) bool {
+		return ((r >= 0 && r <= 64) || (r >= 91 && r <= 96) || (r >= 123))
+	})
+	str = porterstemmer.StemString(str)
+	return str
 }
 
 func (index IndexType) AddWordToIndex(word string, fileName string) IndexType {
@@ -50,18 +55,4 @@ func (main IndexType) MergeIndex(slave IndexType) IndexType {
 		}
 	}
 	return main
-}
-
-func (index IndexType) FindIndex(words []string, fileNames []string) map[string]int {
-	result := make(map[string]int)
-
-	for _, word := range words {
-		for _, fn := range fileNames {
-
-			result[fn] = index[word][fn] + result[fn]
-
-		}
-	}
-
-	return result
 }
