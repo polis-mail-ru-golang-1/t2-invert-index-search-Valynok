@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	"github.com/go-pg/pg"
-	"github.com/t2-invert-index-search-Valynok/config"
-	"github.com/t2-invert-index-search-Valynok/handlers"
-	"github.com/t2-invert-index-search-Valynok/invertindex"
-	"github.com/t2-invert-index-search-Valynok/model"
-	mapUtils "github.com/t2-invert-index-search-Valynok/utils"
-	"github.com/t2-invert-index-search-Valynok/view"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/config"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/handlers"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/invertindex"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/model"
+	mapUtils "github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/utils"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/view"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

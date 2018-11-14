@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/t2-invert-index-search-Valynok/model"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/model"
 
-	"github.com/t2-invert-index-search-Valynok/invertindex"
-	"github.com/t2-invert-index-search-Valynok/view"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/invertindex"
+	"github.com/polis-mail-ru-golang-1/t2-invert-index-search-Valynok/view"
 	"go.uber.org/zap"
 )
 
